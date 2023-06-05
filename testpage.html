@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html>
+<meta name="viewport" content="width=device-width, inital-scale=1.0">
+    <head>
+        <title>Test Add Transaction</title>
+        <link rel="stylesheet" href="style.css"/>
+        <link rel="icon" href="ico_58.png"/>
+    </head>
+    <body>
+        <header>
+            <h1 id="mainHeader">Add Transaction</h1>
+        </header>
+        <form>
+            <div class="row">
+                <div>
+                    <label for="transactionDate">Date of Transaction</label>
+                </div>
+                <div>
+                    <input type="date" id="transactiondate" name="transactiondate"/>
+                </div>
+            </div>
+            <div class="row">
+                <label for="friendslist">Who is this transaction with?</label>
+                <input type="text" list="friends" name="Friends" id="friendslist"/>
+                <datalist id="friends">
+                    <option value="Friend 1">
+                    <option value="Friend 2">
+                    <option value="Friend 3">
+                    <option value="Friend 4">
+                </datalist>
+            </div>
+            <div class="row">
+                <label for="lender">Who payed?</label>
+                <input type="text" list="twomembers" name="Members" id="twoMembersList"/>
+                <datalist id="twomembers">
+                    <option value="Member 1">
+                    <option value="Member 2">
+                </datalist>
+            </div>            
+            <div class="row">
+                <label for="amount">How Much?</label>
+                <input type="number" min="0" step="0.01"/>
+            </div>
+
+        </form>
+    </body>
+    <footer>
+        <h6>JustBalance</h6>
+    </footer>
+</html>
