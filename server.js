@@ -1,11 +1,13 @@
-var express = require('express');
-var app = express();
-var sqlite3 = require('sqlite3');
-var db = new sqlite3.Database('db/justbalancetest.db');
+const express = require('express');
+const app = express();
+const sqlite3 = require('sqlite3');
+const db = new sqlite3.Database('db/justbalancetest.db');
+
+app.use(express.static(__dirname + '/public'));
 
 // routes
 app.get('/', function(request, response){
-    response.send("Hello World");
+    console.log("GET request recieved at /");
 });
 
 app.get('/transactions', function(request, response){
