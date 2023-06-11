@@ -11,3 +11,4 @@ for (let i = 0; i < 100; i++){
     row.setAttribute('class','row');
     container.appendChild(row);
 }
+

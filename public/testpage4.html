@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+<meta name="viewport" content="width=device-width, inital-scale=1.0">
+    <head>
+        <title>Test Friends</title>
+        <link rel="stylesheet" href="style.css"/>
+        <link rel="stylesheet" href="friendspagestyle.css">
+        <link rel="icon" href="ico_58.png"/>
+    </head>
+
+    <body>
+        <header>
+            <h1 id="mainHeader">Friends</h1>
+            <div class="navbar">
+                <a href="index.html">Home</a>
+                <a href="testpage.html">Add Transaction</a>
+                <a href="testpage4.html">Friends</a>
+                <a href="testpage3.html">View Transactions</a>
+            </div>
+        </header>
+        <div class="row" id="firstRow">
+            <div class="col-4" id="friendBox">
+                <form id="addFriends">
+                    <label for="friendUsername"></label>
+                    <input type="text" id="friendUsername" name="friendUsername" placeholder="Friend's Username">
+                    <input type="submit" id="friendSubmit" >
+                </form>
+            </div>
+            <div class="col-8">
+                <h2>Current Friends</h2>
+                <ul id="friendList">
+                    <li>Friend1</li>
+                    <li>Friend2</li>
+                    <li>Friend3</li>
+                </ul>
+            </div>
+        </div>
+        <footer>
+            <h6>JustBalance</h6>
+        </footer>
+        <script>
+            const friendList = document.getElementById('friendList');
+            let testname = 'Perry';
+            let node = document.createTextNode('initialized');
+            let friend = document.createElement('li');
+            for (let i = 0; i<100; i++){
+                testname = "Perry" + i;
+                node = document.createTextNode(testname);
+                friend = document.createElement('li');
+                friend.appendChild(node);
+                friendList.appendChild(friend);
+                
+            }
+        </script>
+
+    </body>

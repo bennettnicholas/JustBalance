@@ -3,55 +3,46 @@
 <html>
 <meta name="viewport" content="width=device-width, inital-scale=1.0">
     <head>
-        <title>Test Add Friends</title>
+        <title>Test Friends</title>
         <link rel="stylesheet" href="style.css"/>
+        <link rel="stylesheet" href="friendspagestyle.css">
         <link rel="icon" href="ico_58.png"/>
     </head>
     <body>
         <header>
-            <h1 id="mainHeader">Add Friends</h1>
+            <h1 id="mainHeader">Friends</h1>
             <div class="navbar">
                 <a href="index.html">Home</a>
                 <a href="testpage.html">Add Transaction</a>
-                <a href="testpage2.html">Add Friends</a>
+                <a href="testpage4.html">Friends</a>
                 <a href="testpage3.html">View Transactions</a>
             </div>
         </header>
 
         <div class="main">
-            <form>
+            <div id="leftside">
+                <form id="addfriends">
+                    <label for="friendUsername">Please enter your friend's username.</label>
+                    <input type="text" name="friendUsername" id="friendUsername">
+                </form>
+                <button type="submit" form="addfriends">Add Friend</button>
+            </div>
+
+            <div id="rightside">
                 <div class="row">
-                    <div>
-                        <label for="transactionDate">Date of Transaction</label>
-                    </div>
-                    <div>
-                        <input type="date" id="transactiondate" name="transactiondate"/>
-                    </div>
+                    <h2>Current Friends</h2>
                 </div>
                 <div class="row">
-                    <label for="friendslist">Who is this transaction with?</label>
-                    <input type="text" list="friends" name="Friends" id="friendslist"/>
-                    <datalist id="friends">
-                        <option value="Friend 1">
-                        <option value="Friend 2">
-                        <option value="Friend 3">
-                        <option value="Friend 4">
-                    </datalist>
+                    <p>Johnny</p>
                 </div>
                 <div class="row">
-                    <label for="lender">Who payed?</label>
-                    <input type="text" list="twomembers" name="Members" id="twoMembersList"/>
-                    <datalist id="twomembers">
-                        <option value="Member 1">
-                        <option value="Member 2">
-                    </datalist>
-                </div>            
-                <div class="row">
-                    <label for="amount">How Much?</label>
-                    <input type="number" min="0" step="0.01"/>
+                    <p>Perry</p>
                 </div>
-    
-            </form>
+                <div class="row">
+                    <p>Turk</p>
+                </div>
+            </div>
+
         </div>
         <footer>
             <h6>JustBalance</h6>
