@@ -3,8 +3,8 @@ const app = express();
 const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database('db/justbalancetest.db');
 const { MongoClient } = require('mongodb');
-const uri = "mongodb+srv://application:HelloWorld@justbalance.5omg9.mongodb.net/?retryWrites=true&w=majority";
-const client = new MongoClient(uri);
+require("dotenv").config();
+const client = new MongoClient(process.env.MONGO_URI);
 
 
 app.use(express.static(__dirname + '/public'));
