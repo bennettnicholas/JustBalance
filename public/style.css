@@ -53,3 +53,10 @@ footer{
 #mainHeader{
     text-align: center;
 }
+#friendRow{
+    margin-top: 55px;
+}
+
+#testcontainer{
+    margin-top: 0;
+}

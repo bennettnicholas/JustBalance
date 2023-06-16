@@ -12,6 +12,7 @@ async function testFetch() {
     });
     const jsonData = await response.json();
     console.log(jsonData);
+    container.innerHTML = "";
 
 
     for (let i = 0; i < jsonData.length; i++){
