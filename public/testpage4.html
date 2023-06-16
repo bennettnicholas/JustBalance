@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!--Just a comment to test if I set my username in git-->
 <html>
 <meta name="viewport" content="width=device-width, inital-scale=1.0">
     <head>
@@ -24,7 +23,7 @@
                 <form id="addFriends">
                     <label for="friendUsername"></label>
                     <input type="text" id="friendUsername" name="friendUsername" placeholder="Friend's Username">
-                    <input type="submit" id="friendSubmit" >
+                    <input type="submit" id="friendSubmit" value="Add Friend">
                 </form>
             </div>
             <div class="col-8">
@@ -40,7 +39,12 @@
             <h6>JustBalance</h6>
         </footer>
         <script>
-            const friendList = document.getElementById('friendList');
+            getFriendsList();
+            
+        async function getFriendsList() {
+            const response = await fetch('/friends')
+        }
+            /*const friendList = document.getElementById('friendList');
             let testname = 'Perry';
             let node = document.createTextNode('initialized');
             let friend = document.createElement('li');
@@ -51,7 +55,7 @@
                 friend.appendChild(node);
                 friendList.appendChild(friend);
                 
-            }
+            }*/
         </script>
 
     </body>

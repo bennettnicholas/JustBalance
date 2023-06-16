@@ -9,12 +9,13 @@
   }
 
 #firstRow{
-    margin-top: 55px;
+    margin-top: 50px;
 }
 
 #friendBox{
-    position: -webkit-sticky;
-    top: 55px;
+    position: sticky;
+    position: -webkit-sticky; /*need this for it to work on Safari*/
+    top: 56px;
     background-color: #EBEBEB;
 }
 

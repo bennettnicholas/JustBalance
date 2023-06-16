@@ -5,25 +5,24 @@
     --accentOrange: #FCA311;
     --markingBlack: #000000;
 }
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 h1{
     color: var(--accentOrange);
-    margin: 0;
 }
 h6{
     color: var(--secondaryGray);
-    margin: 0;
 }
 body{
     background-color: var(--backgroundWhite);
-    margin: 0;
 }
 .navbar{
-    margin: 0;
     background-color: var(--backgroundWhite);
 }
-.navbar a{
-    margin: 0;
-}
+
 .main{
     margin-top: 60px;
     margin-bottom: 15px;
@@ -32,24 +31,21 @@ body{
 .row{
     width: 100%;
     text-align: center;
-    margin: 0;
     padding: 5px 0px;
 }
 header{
     background-color: var(--primaryBlue);
     position: fixed;
+    height: 56px;
     top: 0;
     width: 100%;
-    margin: 0;
 }
 footer{
     background-color: var(--primaryBlue);
-    margin: 0;
     position: fixed; 
     bottom: 0;
     color: var(--secondaryGray);
     width: 100%;
-    margin: 0;
     /*height: 20px;
     padding: 5px;*/
 }
