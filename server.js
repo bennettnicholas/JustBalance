@@ -35,7 +35,9 @@ let session;
 
 //middleware to test if authenticated
 function isAuthenticated (req, res, next) {
-    if (req.session.user) next()
+    console.log("Authenication");
+    console.log(session);
+    if (req.session.userid) next()
     else{
         res.status(401).sendFile('index.html', {root:__dirname});
     }
@@ -57,27 +59,19 @@ app.post('/user',(req,res) => {
     else{
         res.send('Invalid username or password');
     }
-})
-
-app.get('/testpage3',function(req,res){
-    console.log("GET recieved at /testpage3");
-    session=req.session;
-    if(session.userid){
-        res.sendFile('testpage3.html',{root:__dirname})
-    }else
-        res.sendFile('index.html',{root:__dirname})
 });
 
-app.get('/transactions',async function(req,res){
-    session=req.session;
-    if(session.userid){
+app.get('/testpage3', isAuthenticated, function(req,res){
+    console.log("GET recieved at /testpage3");
+    res.sendFile('testpage3.html',{root:__dirname})
+});
+
+app.get('/transactions',isAuthenticated, async function(req,res){
     console.log("GET request recieved at /transactions");
     const transactions = await findTransactionsBetweenUsers(client, session.userid, "oneNonlyBennett");
     res.setHeader('Content-Type', 'application/json');
     console.log(transactions);
     res.status(200).send(transactions);
-    }else
-    res.sendFile('index.html',{root:__dirname})
 });
 /////////////////////////////////////////////////////////////////////////////////////////////////
 app.get('/friends', function(request, response){
