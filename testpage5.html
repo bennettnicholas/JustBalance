@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, inital-scale=1.0">
+    <head>
+        <title>Add User</title>
+        <link rel="icon" href="ico_58.png"/>
+        <link rel="stylesheet" href="loginstyle.css">
+    </head>
+
+    <body>
+        <header>
+            <h1 id="mainHeader">Create User</h1>
+            <div class="navbar">
+                <a href="index.html">Login</a>
+                <a href="testpage5.html">Create Account</a>
+            </div>
+        </header>
+        <form action="/useradd" method="post">
+            <div class="input-field">
+                <input type="text" name="username" id="username" placeholder="Enter Username">
+            </div>
+            <div class="input-field">
+                <input type="password" name="password" id="password" placeholder="Enter Password">
+            </div>
+            <input type="submit" value="Create User">
+        </form>
+
+    </body>
