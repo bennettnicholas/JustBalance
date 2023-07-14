@@ -5,10 +5,15 @@ let row = document.createElement('div');
 
 
 document.getElementById("transFriendSubmit").addEventListener("click", testFetch);
+console.log("look here");
+console.log(document.getElementById("transFriendUsername").innerText);
 
 async function testFetch() {
     const response = await fetch('/transactions', {
-        method: "GET"
+        method: "POST",
+        headers: {"Content-Type": "application/json",},
+        body: JSON.stringify({friendname: document.getElementById("transFriendUsername").value})
+
     });
     const jsonData = await response.json();
     console.log(jsonData);
@@ -19,7 +24,11 @@ async function testFetch() {
         console.log(jsonData[i]);
         let transaction = jsonData[i];
 
-        node = document.createTextNode(transaction.cost);
+        if(transaction.lender_name == document.getElementById("transFriendUsername").value){
+            node = document.createTextNode(transaction.title + " for -$" + transaction.cost);
+        }else {
+            node = document.createTextNode(transaction.title + " for $" + transaction.cost);
+        }
         row = document.createElement('div');
         row.appendChild(node);
         row.setAttribute('class','row');

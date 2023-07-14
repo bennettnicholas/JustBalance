@@ -31,7 +31,9 @@ let session;
 //middleware to test if authenticated
 function isAuthenticated (req, res, next) {
     console.log("Authenication");
-    console.log(session);
+    console.log(req.session.id);
+    session = req.session;
+    console.log(session.userid);
     if (req.session.userid) next()
     else{
         res.status(401).sendFile('login.html', {root:__dirname});
@@ -78,12 +80,12 @@ app.post('/login', async function(req, res){
             if (err) throw err;
             if (result == true){
                 session=req.session;
-                session.userid=username;
-                console.log("Session created \n" + session)
+                session.userid=req.body.username;
+                console.log("Session created \n" + req.session.id);
                 res.status(200).send(user.DisplayName + " has logged on <a href=\'/index.html'>Home</a>");
             } else{
-                res.status(401).send("Wrong Username or Password")
-                console.log("Session not created \n" + session);
+                res.status(401).send("Wrong Username or Password");
+                console.log("Session not created \n" + req.session.id);
             }
             
         });
@@ -92,15 +94,24 @@ app.post('/login', async function(req, res){
     }
 });
 
+/* app.post('/transactions', isAuthenticated, async function(req, res){
+    console.log("POST request recieved at /transactions");
+    const transactions = await findTransactionsBetweenUsers(client, session.userid, req.body.friendname);
+    res.setHeader('Content-Type', 'application/json');
+    console.log(transactions);
+    res.status(200).send(transactions);
+}); */
+
 app.get('/', isAuthenticated, function(req,res){
-    console.log(session);
     res.send("Welcome User <a href=\'/logout'>click to logout</a>");
 });
 
 
 app.get('/logout', function(req, res){
-    if(req.session){
-        req.session.destroy(err => {
+    console.log("GET request recieved at /logout")
+    session = req.session;
+    if(session.userid){
+        session.destroy(err => {
             if (err) {
                 res.status(400).send("Unable to log out")
             } else{
@@ -112,9 +123,10 @@ app.get('/logout', function(req, res){
     }
 });
 
-app.get('/transactions',isAuthenticated, async function(req,res){
-    console.log("GET request recieved at /transactions");
-    const transactions = await findTransactionsBetweenUsers(client, session.userid, "oneNonlyBennett");
+app.post('/transactions',isAuthenticated, async function(req,res){
+    console.log("POST request recieved at /transactions");
+    console.log(req.body);
+    const transactions = await findTransactionsBetweenUsers(client, session.userid, req.body.friendname);
     res.setHeader('Content-Type', 'application/json');
     console.log(transactions);
     res.status(200).send(transactions);
@@ -159,10 +171,10 @@ app.get('/friends', function(request, response){
     console.log(request.body);
 });
 
-app.post('/transactions', function(request,response){
+/* app.post('/transactions', function(request,response){
     console.log("POST request recieved at /transactions");
     console.log(request);
-});
+}); */
 
 // app.get('/transactions', async function(request, response){
 //     console.log("GET request recieved at /transactions");
@@ -177,19 +189,38 @@ app.listen(3000, function(){
 });
 
 async function findTransactionsBetweenUsers(client, borrower = "", lender = "") {
-    const cursor = client.db("JustBalance").collection("Transactions").find({
+    let cursor = client.db("JustBalance").collection("Transactions").find({
         borrower_name: borrower,
         lender_name: lender
-    })
+    });
 
-    const transactions = await cursor.toArray();
+    let negTransactions = await cursor.toArray();
 
-    if (transactions.length > 0) {
+    cursor = client.db("JustBalance").collection("Transactions").find({
+        borrower_name: lender,
+        lender_name: borrower
+    });
+
+    let posTransactions = await cursor.toArray();
+    let transactions;
+
+    if (negTransactions.length > 0 && posTransactions.length > 0){
+        transactions = posTransactions.concat(negTransactions);
+    }else if(negTransactions.length > 0 && posTransactions.length == 0){
+        transactions = negTransactions;
+    }else if (negTransactions.length == 0 && posTransactions.length > 0){
+        transactions = posTransactions;
+    }else {
+        transactions = null;
+    }
+
+
+    if (transactions != null) {
         console.log(`Found ${transactions.length} transactions between ${borrower} and ${lender}`);
-        console.log(transactions);
         const transactionsJSON = JSON.stringify(transactions);
         return transactionsJSON;
-    } else (
-        console.log("Did not find any transactions.")
-    )
+    } else {
+        console.log("Did not find any transactions.");
+        return JSON.stringify([{cost: "No Transactions Found"}]);
+    }
 }
