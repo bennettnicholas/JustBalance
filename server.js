@@ -2,10 +2,17 @@ const express = require('express');
 const cookieParser = require("cookie-parser");
 const sessions = require('express-session');
 const app = express();
-const { MongoClient } = require('mongodb');
 require("dotenv").config();
-const client = new MongoClient(process.env.MONGO_URI);
 const bcrypt = require('bcrypt');
+const mariadb = require('mariadb');
+
+const pool = mariadb.createPool({
+    host: process.env.MARIADB_HOST,
+    user: process.env.MARIADB_USER,
+    password: process.env.MARIADB_PASSWORD,
+    port: 3306,
+    database: "test"
+});
 
 
 app.use(express.static(__dirname + '/public'));
@@ -41,7 +48,7 @@ function isAuthenticated (req, res, next) {
 }
 
 // routes
-app.post('/useradd', async function(req, res){
+/* app.post('/useradd', async function(req, res){
     console.log('POST request recieved at /useradd');
     const saltRounds = 10;
     let username = req.body.username.toLowerCase();
@@ -65,18 +72,56 @@ app.post('/useradd', async function(req, res){
     }
 
     
+}); */
+
+app.post('/useradd', async function(req, res){
+    console.log('POST request recieved at /useradd');
+    const saltRounds = 10;
+    let username = req.body.username.toLowerCase();
+    let password = req.body.password;
+    let displayname = req.body.username;
+    let password_hash = "";
+    var rows = await pool.query("SELECT * FROM users WHERE username = (?)", [username]);
+    var user = rows[0];
+    if(user == null){
+        await bcrypt.hash(password, saltRounds, function(err, hash){
+            if(err) throw err;
+            password_hash = hash;
+            pool.query("INSERT INTO users (username, displayname, password) values (?, ?, ?)", [username, displayname, password_hash], function (err, result){
+                if (err) throw err;
+            });
+        });
+        res.sendFile('login.html',{root:__dirname});      
+    } else{
+        res.status(401).send("Username already exists");
+        console.log("User not created.");
+    }
 });
+
+////////////////////////////////////////////
+// POST
+app.post('/testput', async function(req, res) {
+    let infoName = req.body.name;
+    let infoPhone = req.body.phone;
+    try {
+        const result = await pool.query("INSERT into test_table (name, user_phone) values (?, ?)", [infoName, infoPhone]);
+        res.status(200).send("Info Added to Database.");
+    } catch (err) {
+        throw err;
+    }
+});
+///////////////////////////////////////////
 
 app.post('/login', async function(req, res){
     console.log('POST request recieved at /login')
     let username = req.body.username.toLowerCase();
     console.log('Username: ' + username);
     let password = req.body.password;
-    const user = await client.db("JustBalance").collection("Users").findOne({UserName: username});
-    console.log(user);
+    const rows = await pool.query("SELECT * FROM users WHERE username = (?)", [username]);
+    const user = rows[0];
 
     if (user != null){
-        bcrypt.compare(password, user.Password, function(err, result){
+        bcrypt.compare(password, user.password, function(err, result){
             if (err) throw err;
             if (result == true){
                 session=req.session;
@@ -154,6 +199,11 @@ app.get('/testpage3.html', isAuthenticated, function(req,res){
 app.get('/testpage5.html', function(req,res){
     console.log("GET recieved at /testpage5");
     res.sendFile('testpage5.html',{root:__dirname})
+});
+
+app.get('/testpage6.html', function(req,res){
+    console.log("GET recieved at /testpage6");
+    res.sendFile('testpage6.html',{root:__dirname})
 });
 
 app.get('/login.html', isAuthenticated, function(req,res){
