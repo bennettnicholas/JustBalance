@@ -1,4 +1,4 @@
-const express = require('express');
+const express =  require('express');
 const cookieParser = require("cookie-parser");
 const sessions = require('express-session');
 const app = express();
@@ -14,9 +14,6 @@ const pool = mariadb.createPool({
     database: "test"
 });
 
-
-app.use(express.static(__dirname + '/public'));
-////////////////////////////////////////////////////////////////////////////////////////////////
 // creating 5 minutes from milliseconds
 const oneWeek = 1000 * 60 * 60 * 24 * 7;
 
@@ -43,37 +40,58 @@ function isAuthenticated (req, res, next) {
     console.log(session.userid);
     if (req.session.userid) next()
     else{
-        res.status(401).sendFile('login.html', {root:__dirname});
+        res.status(401).send("Access Denied");
     }
 }
 
-// routes
-/* app.post('/useradd', async function(req, res){
-    console.log('POST request recieved at /useradd');
-    const saltRounds = 10;
-    let username = req.body.username.toLowerCase();
-    let password = req.body.password;
-    let displayname = req.body.username;
+////////////////////////////////////////////////////
+//routes
 
-    const user = await client.db("JustBalance").collection("Users").findOne({UserName: username});
-    if (user != null) {
-        res.status(200).send("Already a User with that username. No new user was created <a href=\'/testpage5.html'>Try Again</a>")
-    } else{
-        console.log(password);
-        hash = await bcrypt.hash(password, saltRounds);
-        console.log(hash);
-        await client.db("JustBalance").collection("Users").insertOne({
-            UserName: username,
-            DisplayName: displayname,
-            Password: hash
-        });
-            console.log('Created User');
-            res.status(200).send('Created User');
+//GET requests
+app.get('/gettransactions', async (req,res) => {
+    try {
+        let userName = req.query.username;
+        console.log(req);
+        console.log(userName);
+        const result = await pool.query(
+        "SELECT " +
+        "payed, " +
+        "share, " +
+        "confirmed, " +
+        "title, " +
+        "amount, " +
+        "transactiondate, " +
+        "squad, " +
+        "settled, " +
+        "FROM nuts " +
+        "WHERE " +
+        "user = (?) " +
+        "INNER JOIN transactions using (transaction)", [userName]
+        );
+
+
+    } catch (error) {
+        throw error;
     }
+})
 
-    
-}); */
+app.get('/logout', function(req, res){
+    console.log("GET request recieved at /logout")
+    session = req.session;
+    if(session.userid){
+        session.destroy(err => {
+            if (err) {
+                res.status(400).send("Unable to log out")
+            } else{
+                res.send("Logout Successful");
+            }
+        });
+    } else {
+        res.end();
+    }
+});
 
+//POST requests
 app.post('/useradd', async function(req, res){
     console.log('POST request recieved at /useradd');
     const saltRounds = 10;
@@ -97,20 +115,6 @@ app.post('/useradd', async function(req, res){
         console.log("User not created.");
     }
 });
-
-////////////////////////////////////////////
-// POST
-app.post('/testput', async function(req, res) {
-    let infoName = req.body.name;
-    let infoPhone = req.body.phone;
-    try {
-        const result = await pool.query("INSERT into test_table (name, user_phone) values (?, ?)", [infoName, infoPhone]);
-        res.status(200).send("Info Added to Database.");
-    } catch (err) {
-        throw err;
-    }
-});
-///////////////////////////////////////////
 
 app.post('/login', async function(req, res){
     console.log('POST request recieved at /login')
@@ -139,138 +143,6 @@ app.post('/login', async function(req, res){
     }
 });
 
-/* app.post('/transactions', isAuthenticated, async function(req, res){
-    console.log("POST request recieved at /transactions");
-    const transactions = await findTransactionsBetweenUsers(client, session.userid, req.body.friendname);
-    res.setHeader('Content-Type', 'application/json');
-    console.log(transactions);
-    res.status(200).send(transactions);
-}); */
-
-app.get('/', isAuthenticated, function(req,res){
-    res.send("Welcome User <a href=\'/logout'>click to logout</a>");
-});
-
-
-app.get('/logout', function(req, res){
-    console.log("GET request recieved at /logout")
-    session = req.session;
-    if(session.userid){
-        session.destroy(err => {
-            if (err) {
-                res.status(400).send("Unable to log out")
-            } else{
-                res.send("Logout Successful");
-            }
-        });
-    } else {
-        res.end();
-    }
-});
-
-app.post('/transactions',isAuthenticated, async function(req,res){
-    console.log("POST request recieved at /transactions");
-    console.log(req.body);
-    const transactions = await findTransactionsBetweenUsers(client, session.userid, req.body.friendname);
-    res.setHeader('Content-Type', 'application/json');
-    console.log(transactions);
-    res.status(200).send(transactions);
-});
-
-app.get('/testpage4.html', isAuthenticated, function(req,res){
-    console.log("GET recieved at /testpage3");
-    res.sendFile('testpage4.html',{root:__dirname})
-});
-
-app.get('/testpage2.html', isAuthenticated, function(req,res){
-    console.log("GET recieved at /testpage3");
-    res.sendFile('testpage2.html',{root:__dirname})
-});
-
-app.get('/testpage.html', isAuthenticated, function(req,res){
-    console.log("GET recieved at /testpage3");
-    res.sendFile('testpage.html',{root:__dirname})
-});
-app.get('/testpage3.html', isAuthenticated, function(req,res){
-    console.log("GET recieved at /testpage3");
-    res.sendFile('testpage3.html',{root:__dirname})
-});
-
-app.get('/testpage5.html', function(req,res){
-    console.log("GET recieved at /testpage5");
-    res.sendFile('testpage5.html',{root:__dirname})
-});
-
-app.get('/testpage6.html', function(req,res){
-    console.log("GET recieved at /testpage6");
-    res.sendFile('testpage6.html',{root:__dirname})
-});
-
-app.get('/login.html', isAuthenticated, function(req,res){
-    console.log("GET recieved at /testpage5");
-    res.sendFile('index.html',{root:__dirname})
-});
-
-app.get('/index.html', isAuthenticated, function(req,res){
-    console.log("GET recieved at /index.html");
-    res.sendFile('index.html',{root:__dirname})
-});
-/////////////////////////////////////////////////////////////////////////////////////////////////
-app.get('/friends', function(request, response){
-    console.log("GET request recieved at /friends");
-    console.log(request.body);
-});
-
-/* app.post('/transactions', function(request,response){
-    console.log("POST request recieved at /transactions");
-    console.log(request);
-}); */
-
-// app.get('/transactions', async function(request, response){
-//     console.log("GET request recieved at /transactions");
-//     const transactions = await findTransactionsBetweenUsers(client, "Kepheous", "oneNonlyBennett");
-//     response.setHeader('Content-Type', 'application/json');
-//     console.log(transactions);
-//     response.status(200).send(transactions);
-// });
-
 app.listen(3000, function(){
     console.log("Server is running at port 3000");
 });
-
-async function findTransactionsBetweenUsers(client, borrower = "", lender = "") {
-    let cursor = client.db("JustBalance").collection("Transactions").find({
-        borrower_name: borrower,
-        lender_name: lender
-    });
-
-    let negTransactions = await cursor.toArray();
-
-    cursor = client.db("JustBalance").collection("Transactions").find({
-        borrower_name: lender,
-        lender_name: borrower
-    });
-
-    let posTransactions = await cursor.toArray();
-    let transactions;
-
-    if (negTransactions.length > 0 && posTransactions.length > 0){
-        transactions = posTransactions.concat(negTransactions);
-    }else if(negTransactions.length > 0 && posTransactions.length == 0){
-        transactions = negTransactions;
-    }else if (negTransactions.length == 0 && posTransactions.length > 0){
-        transactions = posTransactions;
-    }else {
-        transactions = null;
-    }
-
-
-    if (transactions != null) {
-        console.log(`Found ${transactions.length} transactions between ${borrower} and ${lender}`);
-        const transactionsJSON = JSON.stringify(transactions);
-        return transactionsJSON;
-    } else {
-        console.log("Did not find any transactions.");
-        return JSON.stringify([{cost: "No Transactions Found"}]);
-    }
-}
